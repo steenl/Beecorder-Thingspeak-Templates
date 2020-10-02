@@ -1,0 +1,25 @@
+% Read humidity over the past hour from a ThingSpeak channel and write 
+% the average to another ThingSpeak channel. 
+
+% Channel ID to read data from 
+readChannelID = 423656; 
+% Humidity Field ID 
+weightFieldID = 1; 
+
+% Get humidity data for the last 60 minutes from the MathWorks weather 
+% station channel. Learn more about the THINGSPEAKREAD function by going to 
+% the Documentation tab on the right side pane of this page. 
+
+[data,timestamps] = thingSpeakRead(readChannelID,'Fields',weightFieldID,'Numdays',7); 
+%display (data);
+
+avgweight = mean(data); 
+%display(avgweight,'Average weight'); 
+movingAverage = conv(data, ones(21,1)/21, 'same');
+%display(movingAverage);
+plot(timestamps,data,'c:*',timestamps, movingAverage,'b--o');
+legend({'raw data','convol'});
+xlabel('Date');
+ylabel('Hive weight');
+ylim([120 160]);
+title('Steens pseudohive convolution 20 samples');
