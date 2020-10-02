@@ -1,0 +1,12 @@
+% TODO - Replace the [] with channel ID to read data from:
+readChannelID = 1056949;
+% TODO - Replace the [] with the Field ID to read data from:
+fieldID1 = 1;
+% Channel Read API Key
+% If your channel is private, then enter the read API
+% Key between the '' below:
+readAPIKey = 'I9ZTX3HRTWRIJQZQ';
+%% Read Data %%
+[data, time] = thingSpeakRead(readChannelID, 'Field', fieldID1, 'NumPoints', 120, 'ReadKey', readAPIKey);
+%% Visualize Data %%
+plot(time, (data-73)*1.3);
