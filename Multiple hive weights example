@@ -1,0 +1,37 @@
+% Template MATLAB code for visualizing data using the YYAXIS and PLOT functions.
+
+% Prior to running this MATLAB code template, assign the channel variables.
+% Set 'readChannelID' to the channel ID of the channel to read from. 
+% Also, assign the read field IDs to the variables 'fieldID1', and 'fieldID2'. 
+
+% TODO - Replace the [] with channel ID to read data from:
+readChannelID1 = 423656;
+readChannelID2 = 1056949;  % Eddie
+readChannelID3 = 1145821; % MG
+% TODO - Replace the [] with the Field ID to read data from:
+fieldID1 = 1;
+% TODO - Replace the [] with the Field ID to read data from:
+fieldID2 = 1;
+
+% Channel Read API Key 
+% If your channel is private, then enter the read API
+% Key between the '' below: 
+readAPIKey1 = 'AJCT4C2KIPAD2BCW';
+readAPIKey2 = '6PJ85C9UAWVOZBHI';
+readAPIKey3 = 'GSCZ352OHYLN5UV9';
+%% Read Data %%
+
+% Read first data variable
+[data1, time1] = thingSpeakRead(readChannelID1, 'Field', fieldID1, 'NumDays', 3, 'ReadKey', readAPIKey1);
+
+% Read second data variable
+[data2, time2] = thingSpeakRead(readChannelID2, 'Field', fieldID2, 'NumDays', 3, 'ReadKey', readAPIKey2);
+[data3, time3] = thingSpeakRead(readChannelID3, 'Field', fieldID2, 'NumDays', 3, 'ReadKey', readAPIKey3);
+
+%% Visualize Data %%
+
+%%yyaxis left;
+plot(time1, data1, time2, data2)
+legend('Steen','EF');
+%%yyaxis right;
+%plot(time3, data3);
