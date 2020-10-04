@@ -1,0 +1,4 @@
+%needs a lot of work, but below example is to pull current weather, need to figure historic weather.
+% Enter your MATLAB code below
+natickWeather = webread('http://forecast.weather.gov/MapClick.php?lat=42.2834300&lon=-71.3495000&FcstType=json');
+humidity = str2double(natickWeather.currentobservation.Relh)
