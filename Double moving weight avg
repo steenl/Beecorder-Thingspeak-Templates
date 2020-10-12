@@ -1,0 +1,37 @@
+% Template MATLAB code for visualizing data from a channel as a 2D line
+% plot using PLOT function.
+
+% Prior to running this MATLAB code template, assign the channel variables.
+% Set 'readChannelID' to the channel ID of the channel to read from. 
+% Also, assign the read field ID to 'fieldID1'. 
+
+% TODO - Replace the [] with channel ID to read data from:
+readChannelID = 1056949; % Eddie ch
+% TODO - Replace the [] with the Field ID to read data from:
+fieldID1 = 1;
+
+% Channel Read API Key 
+% If your channel is private, then enter the read API
+% Key between the '' below: 
+readAPIKey = '6PJ85C9UAWVOZBHI';
+
+%% Read Data %%
+%at 10min, each day is 144
+[data, time] = thingSpeakRead(readChannelID, 'Field', fieldID1, 'NumDays', 4, 'ReadKey', readAPIKey);
+T=length(data);
+figure
+plot(data)
+h = gca;
+h.XLim = [0,T];
+h.XTick = [0:40:T];
+%h.XTickLabel = datestr(dates(1:144:T),10);
+title 'EF hive weight';
+
+hold on;
+wts1d = [repmat(1/144,143,1)];
+yS = conv(data,wts1d,'valid');
+plot(72:T-71,yS,'r','LineWidth',2);
+wts12hr = [repmat(1/72,72,1)];
+yS12hr = conv(data,wts12hr,'valid');
+plot(36:T-36,yS12hr,'y','LineWidth',1);
+hold off;
