@@ -1,0 +1,76 @@
+%An example of multiple fields on single graph with movavg.  timescale needs to be identical to avoid issues.
+%Steen Oct15 2020
+% Channel ID to read data from 
+readChannelID = 1145821; 
+% Wind Speed Field ID 
+%windSpeedFieldID = 1; 
+weightFieldID = 1; 
+tempFieldID = 2;
+humidFieldID = 3;
+% Channel Read API Key   
+% If your channel is private, then enter the read API Key between the '' below: 
+readAPIKey = 'GSCZ352OHYLN5UV9'; 
+   
+[weightraw,timeStamp1] = thingSpeakRead(readChannelID,'fields',weightFieldID, ...
+                                                     'NumMinutes',360, ...
+                                                     'ReadKey',readAPIKey); 
+[tempraw,timeStamp2] = thingSpeakRead(readChannelID,'fields',tempFieldID, ...
+                                                     'NumMinutes',360, ...
+                                                     'ReadKey',readAPIKey); 
+[humidraw,timeStamp3] = thingSpeakRead(readChannelID,'fields',humidFieldID, ...
+                                                     'NumMinutes',360, ...
+                                                     'ReadKey',readAPIKey);                                                 
+   
+% We will use the isoutlier function. With the default settings, this   
+% calculates whether a value is more than three scaled median absolute 
+% deviations away from the median. (See MATLAB documentation for the   
+% isoutlier function for more details.) If any such points are found, we   
+% will delete the point and the corresponding timestamp. 
+
+% Check for outliers 
+% Find the indices of elements which are outliers 
+outlierDataIndex1 = isoutlier(weightraw); 
+outlierDataIndex2 = isoutlier(tempraw); 
+outlierDataIndex3 = isoutlier(humidraw); 
+
+% Find the indices of elements which are not outliers 
+cleanDataIndex1 = ~outlierDataIndex1;
+cleanDataIndex2 = ~outlierDataIndex2;
+cleanDataIndex3 = ~outlierDataIndex3;
+% Select elements that are outliers 
+outlierData1 = weightraw(outlierDataIndex1); 
+outlierData2 = tempraw(outlierDataIndex2); 
+outlierData3 = humidraw(outlierDataIndex3); 
+% Select elements that are not outliers 
+cleanData1 = weightraw(cleanDataIndex1); 
+cleanData2 = tempraw(cleanDataIndex2); 
+cleanData3 = humidraw(cleanDataIndex3); 
+
+% Select timestamps corresponding to outlier data 
+outlierTimeStamps1 = timeStamp1(outlierDataIndex1); 
+outlierTimeStamps2 = timeStamp2(outlierDataIndex2); 
+outlierTimeStamps3 = timeStamp3(outlierDataIndex3); 
+% Select timestamps corresponding to clean data 
+cleanTimeStamps1 = timeStamp1(cleanDataIndex1); 
+cleanTimeStamps2 = timeStamp2(cleanDataIndex2);
+cleanTimeStamps3 = timeStamp3(cleanDataIndex3);
+% Create a table with outlier data and their respective timestamps 
+outlierDataTable1 = timetable(outlierTimeStamps1,outlierData1); 
+outlierDataTable2 = timetable(outlierTimeStamps2,outlierData2); 
+outlierDataTable3 = timetable(outlierTimeStamps3,outlierData3); 
+% Create a table with clean data and their respective timestamps 
+cleanDataTable1 = timetable(cleanTimeStamps1,cleanData1); 
+cleanDataTable2 = timetable(cleanTimeStamps2,cleanData2); 
+cleanDataTable3 = timetable(cleanTimeStamps3,cleanData3); 
+display(outlierDataTable1,'Outlier data'); 
+
+smoothData1 = movmean(cleanData1,minutes(50),'SamplePoints',timeStamp1);
+smoothData2 = movmean(cleanData2,minutes(50),'SamplePoints',timeStamp2);
+smoothData3 = movmean(cleanData3,minutes(50),'SamplePoints',timeStamp3);
+%yyaxis left;
+%plot (timeStamp1,cleanData1); 
+yyaxis right;
+plot (timeStamp2,smoothData2, timeStamp3, smoothData3); 
+smoothData1 = movmean(cleanData1,minutes(5),'SamplePoints',timeStamp1);
+smoothData2 = movmean(cleanData2,minutes(5),'SamplePoints',timeStamp2);
+smoothData3 = movmean(cleanData3,minutes(5),'SamplePoints',timeStamp3);
