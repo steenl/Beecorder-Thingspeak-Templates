@@ -1,12 +1,19 @@
-% TODO - Replace the [] with channel ID to read data from:
-readChannelID = 1056949;
-% TODO - Replace the [] with the Field ID to read data from:
+  
+% Basic scaling and offset of Beecorder weight. Steen May'21
+
+%Channel to read from
+readChannelID = 423656;
+%Weight field is #1 of channel
 fieldID1 = 1;
-% Channel Read API Key
 % If your channel is private, then enter the read API
-% Key between the '' below:
-readAPIKey = 'I9ZTX3HRTWRIJQZQ';
+readAPIKey = 'AJCT4C2KIPAD2BCW';
+%Weight offset (i.e. raw value read at start of measurements)
+offset_w = -10.0
+% weight scaling factor (delta of a known weight unit)
+% i.e. at 50lbs what is the raw delta measurement per pound)
+scalef_w = 1.3
+
 %% Read Data %%
 [data, time] = thingSpeakRead(readChannelID, 'Field', fieldID1, 'NumPoints', 120, 'ReadKey', readAPIKey);
 %% Visualize Data %%
-plot(time, (data-73)*1.3);
+plot(time, (data-offset_w)*scalef_w);
